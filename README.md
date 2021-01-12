@@ -1,6 +1,6 @@
 # movie_client_app
 
-A new Flutter application.
+A new Flutter Movie Client Application taught By [IT ONE MM](https://www.facebook.com/ItOneTeam/).
 
 ## Getting Started
 
