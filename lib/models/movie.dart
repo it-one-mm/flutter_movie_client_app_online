@@ -25,7 +25,7 @@ class Movie {
   static const String genreNameField = 'genreName';
   static const String keyField = 'key';
   static const String viewCountField = 'viewCount';
-  static const String createdField = 'createdField';
+  static const String createdField = 'created';
 
   factory Movie.fromDocSnapshot(QueryDocumentSnapshot docSnapshot) {
     final data = docSnapshot.data();
