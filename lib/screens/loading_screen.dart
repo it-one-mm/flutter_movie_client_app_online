@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../utils/internet_handler.dart';
 import '../models/series.dart';
 import '../models/movie.dart';
+import '../models/genre.dart';
 import '../widgets/platform_aware_dialog.dart';
 import '../widgets/spin_kit_double_bounce.dart';
 import '../config/my_router.dart';
@@ -36,11 +37,12 @@ class _LoadingScreenState extends State<LoadingScreen> {
     InternetHandler.checkConnection(
       onSuccess: () {
         _sub = Stream.periodic(Duration(seconds: 1), (val) {
+          final genresList = context.read<List<Genre>>();
           final moviesList = context.read<List<Movie>>();
           final seriesList = context.read<List<Series>>();
 
           // Check all of the firestore data is loaded
-          if (moviesList != null && seriesList != null) {
+          if (genresList != null && moviesList != null && seriesList != null) {
             Navigator.pushReplacementNamed(context, MyRouter.HOME_SCREEN);
           }
         }).listen((event) {});

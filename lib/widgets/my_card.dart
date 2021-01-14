@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/constants.dart';
 
 class MyCard extends StatelessWidget {
   MyCard({
@@ -19,10 +20,10 @@ class MyCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(
-          left: index == 0 ? 20.0 : 10.0,
-          right: length - 1 == index ? 20.0 : 0.0,
+          left: index == 0 ? kLeftScreenSpace : kCardSpacing,
+          right: length - 1 == index ? kLeftScreenSpace : 0,
         ),
-        width: 100.0,
+        width: kCardWidth,
         child: Card(
           margin: EdgeInsets.all(0),
           semanticContainer: true,

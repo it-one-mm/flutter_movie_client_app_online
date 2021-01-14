@@ -1,0 +1,8 @@
+const double kCardHeight = 150.0;
+const double kCardWidth = 100.0;
+const double kCardSpacing = 10.0;
+
+const int kShowLimit = 10;
+
+const double kLeftScreenSpace = 20.0;
+const double kBottomScreenSpace = 50.0;
