@@ -4,7 +4,14 @@ import '../models/genre.dart';
 import '../utils/route_handler.dart';
 import '../config/my_router.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
+  @override
+  _MyDrawerState createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  bool _expanded = false;
+
   ListTile _buildDrawerItem(
     BuildContext context, {
     @required String title,
@@ -104,6 +111,7 @@ class MyDrawer extends StatelessWidget {
                     return ExpansionTile(
                       title: Text('Genres'),
                       leading: Icon(Icons.border_all),
+                      maintainState: true,
                       children: listTileWidgetsList,
                     );
                   },
