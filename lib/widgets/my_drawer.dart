@@ -93,6 +93,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       Genre(id: '0', name: 'All'),
                     );
 
+                    // List<Genre> => List<ListTile>
                     final listTileWidgetsList = newGenresList
                         .map(
                           (genre) => ListTile(

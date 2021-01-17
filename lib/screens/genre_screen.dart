@@ -20,14 +20,14 @@ class GenreScreen extends StatelessWidget {
         drawer: MyDrawer(),
         body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            // print(innerBoxIsScrolled);
+            // print('innerBoxIsScrolled: $innerBoxIsScrolled');
             return [
               SliverAppBar(
                 floating: true,
                 snap: true,
                 title: Text('${genre.name} Genre'),
                 bottom: TabBar(
-                  indicatorColor: Colors.amber,
+                  // indicatorColor: Colors.amber,
                   tabs: [
                     Tab(text: '${genre.name} Movies'),
                     Tab(text: '${genre.name} Series'),
@@ -70,12 +70,13 @@ class GenreScreen extends StatelessWidget {
                   itemCount: newMoviesList.length,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 150.0,
-                    crossAxisSpacing: 10.0,
-                    mainAxisSpacing: 10.0,
-                    childAspectRatio: (100.0 / 150.0),
+                    crossAxisSpacing: kCardSpacing,
+                    mainAxisSpacing: kCardSpacing,
+                    childAspectRatio: (kCardWidth / kCardHeight),
                   ),
                   itemBuilder: (context, index) {
                     final movie = newMoviesList[index];
+
                     return GestureDetector(
                       child: MyImageCard(imageUrl: movie.imageUrl),
                       onTap: () {},
@@ -112,12 +113,13 @@ class GenreScreen extends StatelessWidget {
                   itemCount: newSeriesList.length,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 150.0,
-                    crossAxisSpacing: 10.0,
-                    mainAxisSpacing: 10.0,
-                    childAspectRatio: (100.0 / 150.0),
+                    crossAxisSpacing: kCardSpacing,
+                    mainAxisSpacing: kCardSpacing,
+                    childAspectRatio: (kCardWidth / kCardHeight),
                   ),
                   itemBuilder: (context, index) {
                     final series = newSeriesList[index];
+
                     return GestureDetector(
                       child: MyImageCard(
                         imageUrl: series.imageUrl,
