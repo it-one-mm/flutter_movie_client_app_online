@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_client_app/config/my_router.dart';
 import 'package:provider/provider.dart';
 import '../widgets/my_card.dart';
 import '../widgets/title_tile.dart';
@@ -113,7 +114,11 @@ class HomeScreen extends StatelessWidget {
                                 title: genre.name,
                                 titleStyle:
                                     Theme.of(context).textTheme.headline6,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, MyRouter.GENRE_SCREEN,
+                                      arguments: genre);
+                                },
                               ),
                             if (moviesLength > 0)
                               ListTile(

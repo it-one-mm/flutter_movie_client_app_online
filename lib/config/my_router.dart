@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_client_app/models/genre.dart';
+import 'package:movie_client_app/screens/genre_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/movies_screen.dart';
 import '../screens/series_screen.dart';
@@ -9,6 +11,7 @@ class MyRouter {
   static const String HOME_SCREEN = 'home_screen';
   static const String MOVIES_SCREEN = 'movies_screen';
   static const String SERIES_SCREEN = 'series_screen';
+  static const String GENRE_SCREEN = 'genre_screen';
 
   static RouteSettings _settings;
 
@@ -30,6 +33,9 @@ class MyRouter {
         return _buildRoute(MoviesScreen());
       case SERIES_SCREEN:
         return _buildRoute(SeriesScreen());
+      case GENRE_SCREEN:
+        final Genre genre = _settings?.arguments;
+        return _buildRoute(GenreScreen(genre: genre));
     }
 
     return _buildRoute(

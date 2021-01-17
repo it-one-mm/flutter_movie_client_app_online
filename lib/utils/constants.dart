@@ -1,3 +1,5 @@
+const String kErrorLoadingImageText = '😢';
+
 const double kCardHeight = 150.0;
 const double kCardWidth = 100.0;
 const double kCardSpacing = 10.0;

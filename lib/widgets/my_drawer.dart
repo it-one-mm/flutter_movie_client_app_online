@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/genre.dart';
+import '../utils/route_handler.dart';
 import '../config/my_router.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -12,54 +15,9 @@ class MyDrawer extends StatelessWidget {
       leading: icon != null ? Icon(icon) : null,
       title: Text(title),
       onTap: () {
-        _changeRoute(context, routeName);
+        RouteHandler.changeRoute(context, routeName);
       },
     );
-  }
-
-  void _changeRoute(BuildContext context, String newRouteName) {
-    // Close drawer
-    Navigator.pop(context);
-
-    // Check current screen status
-    bool currentRouteIsHome = false;
-    bool currentRouteIsNewRoute = false;
-
-    Navigator.popUntil(context, (currentRoute) {
-      print('currentRoute: ${currentRoute.settings.name}');
-      // This is just a way to access currentRoute; the top route in the
-      // Navigator stack.
-      if (currentRoute.settings.name == MyRouter.HOME_SCREEN) {
-        currentRouteIsHome = true;
-      }
-      if (currentRoute.settings.name == newRouteName) {
-        currentRouteIsNewRoute = true;
-      }
-
-      // Return true so popUntil() pops nothing.
-      return true;
-    });
-
-    print('newRouteName: $newRouteName');
-    print('currentRouteIsHome: $currentRouteIsHome');
-    print('currentRouteIsNewRoute: $currentRouteIsNewRoute');
-
-    // Switch screen
-    if (!currentRouteIsNewRoute) {
-      // Only switch screen if new route is different from current route.
-      if (currentRouteIsHome) {
-        // Navigate from home to non-home screen.
-        Navigator.pushNamed(context, newRouteName);
-      } else {
-        if (newRouteName == MyRouter.HOME_SCREEN) {
-          // Navigate from non-home screen to home.
-          Navigator.pop(context);
-        } else {
-          // Navigate from non-home screen to non-home screen.
-          Navigator.popAndPushNamed(context, newRouteName);
-        }
-      }
-    }
   }
 
   @override
@@ -118,6 +76,37 @@ class MyDrawer extends StatelessWidget {
                   icon: Icons.playlist_play,
                   title: 'Series',
                   routeName: MyRouter.SERIES_SCREEN,
+                ),
+                Consumer<List<Genre>>(
+                  builder: (context, genresList, _) {
+                    // copy genre List
+                    final newGenresList = [...genresList];
+                    newGenresList.insert(
+                      0,
+                      Genre(id: '0', name: 'All'),
+                    );
+
+                    final listTileWidgetsList = newGenresList
+                        .map(
+                          (genre) => ListTile(
+                            title: Text(genre.name),
+                            onTap: () {
+                              RouteHandler.changeRoute(
+                                context,
+                                MyRouter.GENRE_SCREEN,
+                                arguments: genre,
+                              );
+                            },
+                          ),
+                        )
+                        .toList();
+
+                    return ExpansionTile(
+                      title: Text('Genres'),
+                      leading: Icon(Icons.border_all),
+                      children: listTileWidgetsList,
+                    );
+                  },
                 ),
               ],
             ),
