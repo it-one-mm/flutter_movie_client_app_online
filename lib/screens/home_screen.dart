@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movie_client_app/config/my_router.dart';
 import 'package:provider/provider.dart';
+import '../config/my_router.dart';
 import '../widgets/my_card.dart';
 import '../widgets/title_tile.dart';
 import '../widgets/my_drawer.dart';
@@ -24,7 +24,9 @@ class HomeScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: TitleTile(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRouter.MOVIES_SCREEN);
+                },
                 title: 'Latest Movies',
               ),
             ),
@@ -54,7 +56,9 @@ class HomeScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: TitleTile(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRouter.SERIES_SCREEN);
+                },
                 title: 'Latest Series',
               ),
             ),

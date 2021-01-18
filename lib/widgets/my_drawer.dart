@@ -84,6 +84,12 @@ class _MyDrawerState extends State<MyDrawer> {
                   title: 'Series',
                   routeName: MyRouter.SERIES_SCREEN,
                 ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.search,
+                  title: 'Search',
+                  routeName: MyRouter.SEARCH_SCREEN,
+                ),
                 Consumer<List<Genre>>(
                   builder: (context, genresList, _) {
                     // copy genre List
