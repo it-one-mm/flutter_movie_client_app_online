@@ -69,7 +69,7 @@ class GenreScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: newMoviesList.length,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150.0,
+                    maxCrossAxisExtent: kGridItemMaxWidth,
                     crossAxisSpacing: kCardSpacing,
                     mainAxisSpacing: kCardSpacing,
                     childAspectRatio: (kCardWidth / kCardHeight),
@@ -110,9 +110,10 @@ class GenreScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: kLeftScreenSpace),
                 child: GridView.builder(
+                  shrinkWrap: true,
                   itemCount: newSeriesList.length,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150.0,
+                    maxCrossAxisExtent: kGridItemMaxWidth,
                     crossAxisSpacing: kCardSpacing,
                     mainAxisSpacing: kCardSpacing,
                     childAspectRatio: (kCardWidth / kCardHeight),
