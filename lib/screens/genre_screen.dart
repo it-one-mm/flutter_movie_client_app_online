@@ -101,7 +101,7 @@ class GenreScreen extends StatelessWidget {
           newSeriesList =
               seriesList.where((m) => m.genreId == genre.id).toList();
 
-        if (newSeriesList.isEmpty) return Center(child: Text('No Movies'));
+        if (newSeriesList.isEmpty) return Center(child: Text('No Series'));
 
         return Column(
           children: [

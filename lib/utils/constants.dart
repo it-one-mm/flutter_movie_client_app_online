@@ -10,3 +10,7 @@ const double kLeftScreenSpace = 20.0;
 const double kBottomScreenSpace = 50.0;
 
 const double kGridItemMaxWidth = 150.0;
+
+int computeLimit(int length) {
+  return length < kShowLimit + 1 ? length : kShowLimit;
+}

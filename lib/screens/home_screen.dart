@@ -10,10 +10,6 @@ import '../models/series.dart';
 import '../utils/constants.dart';
 
 class HomeScreen extends StatelessWidget {
-  int _computeLimit(int length) {
-    return length < kShowLimit + 1 ? length : kShowLimit;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                 height: kCardHeight,
                 child: Consumer<List<Movie>>(
                   builder: (context, movies, _) {
-                    final length = _computeLimit(movies.length);
+                    final length = computeLimit(movies.length);
 
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -67,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                 height: kCardHeight,
                 child: Consumer<List<Series>>(
                   builder: (context, seriesList, _) {
-                    final length = _computeLimit(seriesList.length);
+                    final length = computeLimit(seriesList.length);
 
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -98,14 +94,12 @@ class HomeScreen extends StatelessWidget {
                         final newMoviesList = moviesList
                             .where((m) => m.genreId == genre.id)
                             .toList();
-                        final moviesLength =
-                            _computeLimit(newMoviesList.length);
+                        final moviesLength = computeLimit(newMoviesList.length);
 
                         final newSeriesList = seriesList
                             .where((s) => s.genreId == genre.id)
                             .toList();
-                        final seriesLength =
-                            _computeLimit(newSeriesList.length);
+                        final seriesLength = computeLimit(newSeriesList.length);
 
                         return Column(
                           children: [
