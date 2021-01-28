@@ -26,7 +26,7 @@ class MyImageCard extends StatelessWidget {
         },
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(kCardRadius),
       ),
       elevation: 5,
     );

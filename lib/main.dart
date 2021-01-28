@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData.dark().copyWith(
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          accentColor: Colors.redAccent,
         ),
         initialRoute: MyRouter.LOADING_SCREEN,
         onGenerateRoute: MyRouter.onGenerateRoute,

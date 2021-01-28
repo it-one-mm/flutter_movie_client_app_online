@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:movie_client_app/models/genre.dart';
+import '../models/genre.dart';
 import '../config/my_router.dart';
 
 class RouteHandler {
+  static Future<void> buildMaterialRoute(BuildContext context, Widget widget,
+      [bool fullScreenDialog = false]) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => widget,
+        fullscreenDialog: fullScreenDialog,
+      ),
+    );
+  }
+
   static void changeRoute(BuildContext context, String newRouteName,
       {Object arguments}) {
     // Close drawer

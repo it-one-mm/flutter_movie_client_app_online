@@ -10,4 +10,10 @@ class SeriesService {
         (query) =>
             query.docs.map((doc) => Series.fromDocSnapshot(doc)).toList());
   }
+
+  Future<void> updateViewCount(String docId) async {
+    await _ref.doc(docId).update({
+      Series.viewCountField: FieldValue.increment(1),
+    });
+  }
 }

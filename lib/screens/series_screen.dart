@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/series_detail_screen.dart';
+import '../utils/route_handler.dart';
 import '../widgets/my_card.dart';
 import '../widgets/my_image_card.dart';
 import '../models/series.dart';
@@ -50,13 +52,20 @@ class SeriesScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: popularSeriesListLength,
                         itemBuilder: (context, index) {
-                          final popularMovie = popularSeriesList[index];
+                          final popularSeries = popularSeriesList[index];
 
                           return MyCard(
                             length: popularSeriesListLength,
                             index: index,
-                            imageUrl: popularMovie.imageUrl,
-                            onTap: () {},
+                            imageUrl: popularSeries.imageUrl,
+                            onTap: () {
+                              RouteHandler.buildMaterialRoute(
+                                context,
+                                SeriesDetailScreen(
+                                  seriesId: popularSeries.id,
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -80,11 +89,19 @@ class SeriesScreen extends StatelessWidget {
                           ),
                           itemCount: allSeriesList.length,
                           itemBuilder: (context, index) {
+                            final series = allSeriesList[index];
                             return GestureDetector(
                               child: MyImageCard(
-                                imageUrl: allSeriesList[index].imageUrl,
+                                imageUrl: series.imageUrl,
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                RouteHandler.buildMaterialRoute(
+                                  context,
+                                  SeriesDetailScreen(
+                                    seriesId: series.id,
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),

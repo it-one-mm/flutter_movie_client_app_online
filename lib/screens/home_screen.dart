@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/series_detail_screen.dart';
+import '../utils/route_handler.dart';
 import '../config/my_router.dart';
 import '../widgets/my_card.dart';
 import '../widgets/title_tile.dart';
@@ -79,6 +81,10 @@ class HomeScreen extends StatelessWidget {
                           length: length,
                           index: index,
                           imageUrl: series.imageUrl,
+                          onTap: () {
+                            RouteHandler.buildMaterialRoute(context,
+                                SeriesDetailScreen(seriesId: series.id));
+                          },
                         );
                       },
                     );
