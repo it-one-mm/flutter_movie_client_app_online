@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
+import '../screens/v_play_screen.dart';
+import '../utils/route_handler.dart';
 import '../config/service_locator.dart';
 import '../services/episode_service.dart';
 import '../services/series_service.dart';
@@ -10,8 +11,8 @@ import '../models/episode.dart';
 import '../utils/constants.dart';
 
 class SeriesDetailScreen extends StatefulWidget {
-  SeriesDetailScreen({@required this.seriesId}) : assert(seriesId != null);
-  final String seriesId;
+  SeriesDetailScreen({@required this.series}) : assert(series != null);
+  final Series series;
   @override
   _SeriesDetailScreenState createState() => _SeriesDetailScreenState();
 }
@@ -23,16 +24,15 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
   @override
   void initState() {
     super.initState();
+
+    _series = widget.series;
     _init();
   }
 
   void _init() async {
-    final seriesList = context.read<List<Series>>();
-    _series = seriesList.where((s) => s.id == widget.seriesId).first;
     _episodesListFuture = getIt<EpisodeService>().getSeriesEpisodes(_series.id);
-    if (_series != null) {
-      await getIt<SeriesService>().updateViewCount(_series.id);
-    }
+
+    await getIt<SeriesService>().updateViewCount(_series.id);
   }
 
   @override
@@ -83,7 +83,7 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                                 Text(
                                   _series.title,
                                   style: TextStyle(
-                                    fontSize: 28.0,
+                                    fontSize: 24.0,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -93,6 +93,13 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                                     color: Theme.of(context).primaryColorLight,
                                     fontSize: 18,
                                   ),
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.remove_red_eye),
+                                    SizedBox(width: 5.0),
+                                    Text('${_series.viewCount}'),
+                                  ],
                                 ),
                                 SizedBox(height: 10.0),
                                 if (_series.description.isNotEmpty)
@@ -140,7 +147,17 @@ class _SeriesDetailScreenState extends State<SeriesDetailScreen> {
                                 child: ListTile(
                                   title: Text('Episode ${episode.no}'),
                                   trailing: Icon(Icons.play_circle_filled),
-                                  onTap: () {},
+                                  onTap: () {
+                                    RouteHandler.buildMaterialRoute(
+                                      context,
+                                      VPlayScreen(
+                                        title:
+                                            '${_series.title}\nEpisode ${episode.no}',
+                                        path: episode.key,
+                                      ),
+                                      true,
+                                    );
+                                  },
                                 ),
                               );
                             },

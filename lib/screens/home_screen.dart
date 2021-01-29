@@ -82,8 +82,8 @@ class HomeScreen extends StatelessWidget {
                           index: index,
                           imageUrl: series.imageUrl,
                           onTap: () {
-                            RouteHandler.buildMaterialRoute(context,
-                                SeriesDetailScreen(seriesId: series.id));
+                            RouteHandler.buildMaterialRoute(
+                                context, SeriesDetailScreen(series: series));
                           },
                         );
                       },

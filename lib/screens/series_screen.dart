@@ -62,7 +62,7 @@ class SeriesScreen extends StatelessWidget {
                               RouteHandler.buildMaterialRoute(
                                 context,
                                 SeriesDetailScreen(
-                                  seriesId: popularSeries.id,
+                                  series: popularSeries,
                                 ),
                               );
                             },
@@ -98,7 +98,7 @@ class SeriesScreen extends StatelessWidget {
                                 RouteHandler.buildMaterialRoute(
                                   context,
                                   SeriesDetailScreen(
-                                    seriesId: series.id,
+                                    series: series,
                                   ),
                                 );
                               },
