@@ -100,17 +100,17 @@ class _VPlayScreenState extends State<VPlayScreen> {
   }
 
   Future<String> _findLocalPath() async {
-    // if (Platform.isAndroid) {
-    //   return '/storage/emulated/0';
-    // } else {
-    //   // IOS
-    //   final directory = await getApplicationDocumentsDirectory();
-    //   return directory.path;
-    // }
-    final directory = Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationDocumentsDirectory();
-    return directory.path;
+    if (Platform.isAndroid) {
+      return '/storage/emulated/0';
+    } else {
+      // IOS
+      final directory = await getApplicationDocumentsDirectory();
+      return directory.path;
+    }
+    // final directory = Platform.isAndroid
+    //     ? await getExternalStorageDirectory()
+    //     : await getApplicationDocumentsDirectory();
+    // return directory.path;
   }
 
   Future<void> _handleDownload() async {
