@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/v_play_screen.dart';
 import '../screens/series_detail_screen.dart';
 import '../utils/route_handler.dart';
 import '../config/my_router.dart';
@@ -12,6 +13,23 @@ import '../models/series.dart';
 import '../utils/constants.dart';
 
 class HomeScreen extends StatelessWidget {
+  void _handleMovieTap(BuildContext context, Movie movie) {
+    RouteHandler.buildMaterialRoute(
+      context,
+      VPlayScreen(
+        path: movie.key,
+        title: movie.title,
+        isMovie: true,
+        movieId: movie.id,
+      ),
+    );
+  }
+
+  void _handleSeriesTap(context, Series series) {
+    RouteHandler.buildMaterialRoute(
+        context, SeriesDetailScreen(series: series));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +67,9 @@ class HomeScreen extends StatelessWidget {
                           length: length,
                           index: index,
                           imageUrl: movie.imageUrl,
+                          onTap: () {
+                            _handleMovieTap(context, movie);
+                          },
                         );
                       },
                     );
@@ -82,8 +103,7 @@ class HomeScreen extends StatelessWidget {
                           index: index,
                           imageUrl: series.imageUrl,
                           onTap: () {
-                            RouteHandler.buildMaterialRoute(
-                                context, SeriesDetailScreen(series: series));
+                            _handleSeriesTap(context, series);
                           },
                         );
                       },
@@ -140,6 +160,10 @@ class HomeScreen extends StatelessWidget {
                                     length: moviesLength,
                                     index: index,
                                     imageUrl: newMoviesList[index].imageUrl,
+                                    onTap: () {
+                                      _handleMovieTap(
+                                          context, newMoviesList[index]);
+                                    },
                                   ),
                                 ),
                               ),
@@ -159,6 +183,10 @@ class HomeScreen extends StatelessWidget {
                                     length: seriesLength,
                                     index: index,
                                     imageUrl: newSeriesList[index].imageUrl,
+                                    onTap: () {
+                                      _handleSeriesTap(
+                                          context, newSeriesList[index]);
+                                    },
                                   ),
                                 ),
                               ),

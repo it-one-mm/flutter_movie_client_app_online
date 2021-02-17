@@ -7,8 +7,22 @@ import '../widgets/my_card.dart';
 import '../widgets/my_image_card.dart';
 import '../models/movie.dart';
 import '../widgets/my_drawer.dart';
+import '../screens/v_play_screen.dart';
+import '../utils/route_handler.dart';
 
 class MoviesScreen extends StatelessWidget {
+  void _handleMovieTap(BuildContext context, Movie movie) {
+    RouteHandler.buildMaterialRoute(
+      context,
+      VPlayScreen(
+        path: movie.key,
+        title: movie.title,
+        isMovie: true,
+        movieId: movie.id,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final moviesList = Provider.of<List<Movie>>(context);
@@ -56,7 +70,9 @@ class MoviesScreen extends StatelessWidget {
                             length: popularMoviesListLength,
                             index: index,
                             imageUrl: popularMovie.imageUrl,
-                            onTap: () {},
+                            onTap: () {
+                              _handleMovieTap(context, popularMovie);
+                            },
                           );
                         },
                       ),
@@ -80,11 +96,15 @@ class MoviesScreen extends StatelessWidget {
                           ),
                           itemCount: allMoviesList.length,
                           itemBuilder: (context, index) {
+                            final movie = allMoviesList[index];
+
                             return GestureDetector(
                               child: MyImageCard(
-                                imageUrl: allMoviesList[index].imageUrl,
+                                imageUrl: movie.imageUrl,
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                _handleMovieTap(context, movie);
+                              },
                             );
                           },
                         ),

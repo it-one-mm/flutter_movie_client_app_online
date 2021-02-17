@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,15 +7,22 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import '../config/service_locator.dart';
+import '../services/movie_service.dart';
 
 class VPlayScreen extends StatefulWidget {
   VPlayScreen({
     this.title = '',
+    this.isMovie = false,
+    this.movieId = '',
     @required this.path,
   }) : assert(path != null);
 
   final String title;
   final String path;
+  final bool isMovie;
+  final String movieId;
 
   @override
   _VPlayScreenState createState() => _VPlayScreenState();
@@ -24,6 +32,7 @@ class _VPlayScreenState extends State<VPlayScreen> {
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
   bool _playError = false;
+  String _videoUrl = '';
 
   final _playErrorText = 'Oops cannot play video at this time!';
 
@@ -37,7 +46,7 @@ class _VPlayScreenState extends State<VPlayScreen> {
     'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4',
     'https://filesamples.com/samples/video/mp4/sample_640x360.mp4',
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-    '',
+    'http://download1649.mediafire.com/u8z2navn572g/m59e4vi2zkhamqr/test2.mp4',
   ];
 
   @override
@@ -49,7 +58,21 @@ class _VPlayScreenState extends State<VPlayScreen> {
 
   void _init() async {
     try {
-      _videoPlayerController = VideoPlayerController.network(videos[2]);
+      if (widget.isMovie) {
+        await getIt<MovieService>().updateViewCount(widget.movieId);
+      }
+
+      final endPoint = 'https://mf-api.herokuapp.com';
+      final response = await http
+          .get('$endPoint?url=${widget.path}')
+          .timeout(Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _videoUrl = data[0]['file'];
+      }
+
+      _videoPlayerController = VideoPlayerController.network(_videoUrl);
       await _videoPlayerController.initialize();
 
       _chewieController = ChewieController(
@@ -127,7 +150,7 @@ class _VPlayScreenState extends State<VPlayScreen> {
       }
 
       await FlutterDownloader.enqueue(
-        url: videos[3],
+        url: _videoUrl,
         savedDir: localPath,
         showNotification:
             true, // show download progress in status bar (for Android)

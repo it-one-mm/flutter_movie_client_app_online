@@ -11,4 +11,10 @@ class MovieService {
         .snapshots()
         .map((sn) => sn.docs.map((doc) => Movie.fromDocSnapshot(doc)).toList());
   }
+
+  Future<void> updateViewCount(String docId) async {
+    await _ref.doc(docId).update({
+      Movie.viewCountField: FieldValue.increment(1),
+    });
+  }
 }
