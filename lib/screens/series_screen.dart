@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import '../ad_helper.dart';
 import '../screens/series_detail_screen.dart';
 import '../utils/route_handler.dart';
 import '../widgets/my_card.dart';
@@ -10,7 +13,33 @@ import '../models/series.dart';
 import '../widgets/my_drawer.dart';
 import '../utils/constants.dart';
 
-class SeriesScreen extends StatelessWidget {
+class SeriesScreen extends StatefulWidget {
+  @override
+  _SeriesScreenState createState() => _SeriesScreenState();
+}
+
+class _SeriesScreenState extends State<SeriesScreen> {
+  final logger = Logger();
+  BannerAd _banner;
+  bool _adLoaded = false;
+
+  @override
+  void dispose() {
+    _banner?.dispose();
+    _banner = null;
+
+    super.dispose();
+  }
+
+  void _createBannerAd(BuildContext context) {
+    AdHelper.createBannerAd(context, (ad) {
+      logger.i('$BannerAd loaded.');
+      setState(() {
+        _banner = ad as BannerAd;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final seriesList = Provider.of<List<Series>>(context);
@@ -23,94 +52,111 @@ class SeriesScreen extends StatelessWidget {
     List<Series> allSeriesList = [...seriesList];
     allSeriesList.shuffle(Random());
 
-    return Scaffold(
-      drawer: MyDrawer(),
-      body: NestedScrollView(
-        headerSliverBuilder: (_, __) => [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            title: Text('Series'),
-          ),
-        ],
-        body: seriesList.length == 0
-            ? Center(
-                child: Text('No Series'),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(bottom: kBottomScreenSpace),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      contentPadding: EdgeInsets.only(left: kLeftScreenSpace),
-                      title: Text('Popular Series'),
-                    ),
-                    Container(
-                      height: kCardHeight,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: popularSeriesListLength,
-                        itemBuilder: (context, index) {
-                          final popularSeries = popularSeriesList[index];
+    return Builder(
+      builder: (ctx) {
+        if (!_adLoaded) {
+          _adLoaded = true;
+          _createBannerAd(context);
+        }
+        return Scaffold(
+          drawer: MyDrawer(),
+          body: NestedScrollView(
+            headerSliverBuilder: (_, __) => [
+              SliverAppBar(
+                floating: true,
+                snap: true,
+                title: Text('Series'),
+              ),
+            ],
+            body: seriesList.length == 0
+                ? Center(
+                    child: Text('No Series'),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: kBottomScreenSpace),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          contentPadding:
+                              EdgeInsets.only(left: kLeftScreenSpace),
+                          title: Text('Popular Series'),
+                        ),
+                        Container(
+                          height: kCardHeight,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: popularSeriesListLength,
+                            itemBuilder: (context, index) {
+                              final popularSeries = popularSeriesList[index];
 
-                          return MyCard(
-                            length: popularSeriesListLength,
-                            index: index,
-                            imageUrl: popularSeries.imageUrl,
-                            onTap: () {
-                              RouteHandler.buildMaterialRoute(
-                                context,
-                                SeriesDetailScreen(
-                                  series: popularSeries,
-                                ),
+                              return MyCard(
+                                length: popularSeriesListLength,
+                                index: index,
+                                imageUrl: popularSeries.imageUrl,
+                                onTap: () {
+                                  RouteHandler.buildMaterialRoute(
+                                    context,
+                                    SeriesDetailScreen(
+                                      series: popularSeries,
+                                    ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('All Series'),
-                      contentPadding: EdgeInsets.only(left: kLeftScreenSpace),
-                    ),
-                    Flexible(
-                      child: Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: kLeftScreenSpace),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: kGridItemMaxWidth,
-                            crossAxisSpacing: kCardSpacing,
-                            mainAxisSpacing: kCardSpacing,
-                            childAspectRatio: (kCardWidth / kCardHeight),
                           ),
-                          itemCount: allSeriesList.length,
-                          itemBuilder: (context, index) {
-                            final series = allSeriesList[index];
-                            return GestureDetector(
-                              child: MyImageCard(
-                                imageUrl: series.imageUrl,
+                        ),
+                        ListTile(
+                          title: Text('All Series'),
+                          contentPadding:
+                              EdgeInsets.only(left: kLeftScreenSpace),
+                        ),
+                        Flexible(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: kLeftScreenSpace),
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: kGridItemMaxWidth,
+                                crossAxisSpacing: kCardSpacing,
+                                mainAxisSpacing: kCardSpacing,
+                                childAspectRatio: (kCardWidth / kCardHeight),
                               ),
-                              onTap: () {
-                                RouteHandler.buildMaterialRoute(
-                                  context,
-                                  SeriesDetailScreen(
-                                    series: series,
+                              itemCount: allSeriesList.length,
+                              itemBuilder: (context, index) {
+                                final series = allSeriesList[index];
+                                return GestureDetector(
+                                  child: MyImageCard(
+                                    imageUrl: series.imageUrl,
                                   ),
+                                  onTap: () {
+                                    RouteHandler.buildMaterialRoute(
+                                      context,
+                                      SeriesDetailScreen(
+                                        series: series,
+                                      ),
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-      ),
+                  ),
+          ),
+          bottomNavigationBar: _banner != null
+              ? Container(
+                  width: _banner.size.width.toDouble(),
+                  height: _banner.size.height.toDouble(),
+                  child: AdWidget(ad: _banner),
+                )
+              : Container(),
+        );
+      },
     );
   }
 }

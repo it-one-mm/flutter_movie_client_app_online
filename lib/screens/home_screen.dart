@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
-import 'package:movie_client_app/ad_helper.dart';
 import 'package:provider/provider.dart';
+import '../ad_helper.dart';
 import '../screens/v_play_screen.dart';
 import '../screens/series_detail_screen.dart';
 import '../utils/route_handler.dart';
@@ -33,35 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _createBanner(BuildContext context) async {
-    final AnchoredAdaptiveBannerAdSize size =
-        await AdSize.getAnchoredAdaptiveBannerAdSize(
-      Orientation.portrait,
-      MediaQuery.of(context).size.width.truncate(),
-    );
-
-    if (size == null) {
-      logger.e('Unable to get height of anchored banner.');
-      return;
-    }
-
-    BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: size,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          logger.i('Banner Ad Loaded.');
-          setState(() {
-            _banner = ad;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          logger.e('Banner Ad failed to load: $error');
-          ad.dispose();
-        },
-      ),
-    )..load();
+  void _createBanner(BuildContext context) {
+    AdHelper.createBannerAd(context, (ad) {
+      logger.i('$BannerAd loaded.');
+      setState(() {
+        _banner = ad as BannerAd;
+      });
+    });
   }
 
   void _handleMovieTap(BuildContext context, Movie movie) {
@@ -83,15 +61,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MyDrawer(),
-      body: Builder(
-        builder: (context) {
-          if (!_adLoaded) {
-            _adLoaded = true;
-            _createBanner(context);
-          }
-          return SafeArea(
+    return Builder(
+      builder: (ctx) {
+        if (!_adLoaded) {
+          _adLoaded = true;
+          _createBanner(ctx);
+        }
+        return Scaffold(
+          drawer: MyDrawer(),
+          body: SafeArea(
             child: CustomScrollView(
               slivers: [
                 SliverAppBar(
@@ -261,16 +239,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-          );
-        },
-      ),
-      bottomNavigationBar: _banner != null
-          ? Container(
-              width: _banner.size.width.toDouble(),
-              height: _banner.size.height.toDouble(),
-              child: AdWidget(ad: _banner),
-            )
-          : Container(),
+          ),
+          bottomNavigationBar: _banner != null
+              ? Container(
+                  width: _banner.size.width.toDouble(),
+                  height: _banner.size.height.toDouble(),
+                  child: AdWidget(ad: _banner),
+                )
+              : Container(),
+        );
+      },
     );
   }
 }
