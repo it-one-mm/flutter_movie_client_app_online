@@ -59,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           logger.e('Banner Ad failed to load: $error');
           ad.dispose();
-          _banner = null;
         },
       ),
     )..load();
