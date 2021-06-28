@@ -142,8 +142,8 @@ class _VPlayScreenState extends State<VPlayScreen> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      // _videoUrl = data[0]['file'];
-      _videoUrl = videos[3];
+      _videoUrl = data[0]['file']; // call from api
+      // _videoUrl = videos[3]; // test link
     }
   }
 
