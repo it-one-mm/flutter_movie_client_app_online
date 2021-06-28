@@ -10,6 +10,10 @@ class AdHelper {
   static final logger = Logger();
   static InterstitialAd _interstitialAd;
   static int _numInterstitialLoadAttempts = 0;
+  static RewardedAd _rewardedAd;
+  static int _numRewardedLoadAttempts = 0;
+
+  static final AdRequest _request = AdRequest();
 
   static String get bannerAdUnitId => Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/6300978111'
@@ -39,7 +43,7 @@ class AdHelper {
     BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       size: size,
-      request: AdRequest(),
+      request: _request,
       listener: BannerAdListener(
         onAdLoaded: onAdLoaded,
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
@@ -53,7 +57,7 @@ class AdHelper {
   static void createInterstitialAd() {
     InterstitialAd.load(
       adUnitId: interstitialAdUnitId,
-      request: AdRequest(),
+      request: _request,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           logger.i('$ad loaded');
@@ -93,5 +97,66 @@ class AdHelper {
     );
     _interstitialAd.show();
     _interstitialAd = null;
+  }
+
+  static void createRewardedAd() {
+    RewardedAd.load(
+        adUnitId: RewardedAd.testAdUnitId,
+        request: _request,
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (RewardedAd ad) {
+            logger.i('$ad loaded.');
+            _rewardedAd = ad;
+            _numRewardedLoadAttempts = 0;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            logger.e('RewardedAd failed to load: $error');
+            _rewardedAd = null;
+            _numRewardedLoadAttempts += 1;
+            if (_numRewardedLoadAttempts <= maxFailedLoadAttempts) {
+              createRewardedAd();
+            }
+          },
+        ));
+  }
+
+  static void showRewardedAd(
+      {void Function(RewardedAd, RewardItem) onUserEarnedReward}) {
+    if (_rewardedAd == null) {
+      logger.w('Attempt to show rewarded before loaded.');
+      return;
+    }
+    _rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (RewardedAd ad) =>
+          logger.i('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (RewardedAd ad) {
+        logger.i('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        createRewardedAd();
+      },
+      onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+        logger.e('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        createRewardedAd();
+      },
+    );
+
+    _rewardedAd.show(onUserEarnedReward: onUserEarnedReward);
+    _rewardedAd = null;
+  }
+
+  static void releaseAdResource() {
+    releaseInterstitialAd();
+    releaseRewardedAd();
+  }
+
+  static void releaseInterstitialAd() {
+    _interstitialAd?.dispose();
+    _interstitialAd = null;
+  }
+
+  static void releaseRewardedAd() {
+    _rewardedAd?.dispose();
+    _rewardedAd = null;
   }
 }

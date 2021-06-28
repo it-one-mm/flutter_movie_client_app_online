@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import '../ad_helper.dart';
 import '../config/service_locator.dart';
 import '../services/movie_service.dart';
 
@@ -29,10 +32,13 @@ class VPlayScreen extends StatefulWidget {
 }
 
 class _VPlayScreenState extends State<VPlayScreen> {
+  final logger = Logger();
+
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
   bool _playError = false;
   String _videoUrl = '';
+  bool _loadingVideo = false;
 
   final _playErrorText = 'Oops cannot play video at this time!';
 
@@ -57,44 +63,9 @@ class _VPlayScreenState extends State<VPlayScreen> {
   }
 
   void _init() async {
-    try {
-      if (widget.isMovie) {
-        await getIt<MovieService>().updateViewCount(widget.movieId);
-      }
-
-      final endPoint = 'https://mf-api.herokuapp.com';
-      final response = await http
-          .get('$endPoint?url=${widget.path}')
-          .timeout(Duration(seconds: 8));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        _videoUrl = data[0]['file'];
-      }
-
-      _videoPlayerController = VideoPlayerController.network(_videoUrl);
-      await _videoPlayerController.initialize();
-
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
-        autoPlay: true,
-        errorBuilder: (context, error) {
-          return Center(
-            child: Text(
-              '$_playErrorText',
-              textAlign: TextAlign.center,
-              style: _errorTextStyle,
-            ),
-          );
-        },
-      );
-
-      _playError = false;
-    } catch (e) {
-      _playError = true;
+    if (widget.isMovie) {
+      await getIt<MovieService>().updateViewCount(widget.movieId);
     }
-
-    setState(() {});
   }
 
   @override
@@ -163,6 +134,59 @@ class _VPlayScreenState extends State<VPlayScreen> {
     }
   }
 
+  Future<void> _fetchVideoUrl() async {
+    final endPoint = 'https://mf-api.herokuapp.com';
+    final response = await http
+        .get('$endPoint?url=${widget.path}')
+        .timeout(Duration(seconds: 8));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      // _videoUrl = data[0]['file'];
+      _videoUrl = videos[3];
+    }
+  }
+
+  void _handlePlay() async {
+    AdHelper.showRewardedAd(
+        onUserEarnedReward: (RewardedAd ad, RewardItem reward) async {
+      logger.i('$ad with reward $RewardItem(${reward.amount}, ${reward.type}');
+
+      try {
+        setState(() {
+          _loadingVideo = true;
+        });
+
+        if (_videoUrl.isEmpty) {
+          await _fetchVideoUrl();
+        }
+
+        _videoPlayerController = VideoPlayerController.network(_videoUrl);
+        await _videoPlayerController.initialize();
+
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController,
+          autoPlay: false,
+          errorBuilder: (context, error) {
+            return Center(
+              child: Text(
+                '$_playErrorText',
+                textAlign: TextAlign.center,
+                style: _errorTextStyle,
+              ),
+            );
+          },
+        );
+        _loadingVideo = false;
+        _playError = false;
+      } catch (e) {
+        _loadingVideo = false;
+        _playError = true;
+      }
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,11 +222,35 @@ class _VPlayScreenState extends State<VPlayScreen> {
                       )
                     : Center(
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 20),
-                            Text('Loading'),
+                          children: [
+                            if (_loadingVideo) ...[
+                              CircularProgressIndicator(),
+                              SizedBox(height: 20),
+                              Text('Loading'),
+                            ],
+                            if (!_loadingVideo)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
+                                child: FlatButton(
+                                  color: Colors.white,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.play_circle_outline,
+                                          color: Colors.black),
+                                      SizedBox(width: 5.0),
+                                      Text(
+                                        'Play Video',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: _handlePlay,
+                                ),
+                              ),
                           ],
                         ),
                       ),

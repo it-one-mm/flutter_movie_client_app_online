@@ -26,9 +26,20 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _adLoaded = false;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    AdHelper.createInterstitialAd();
+    AdHelper.createRewardedAd();
+  }
+
+  @override
   void dispose() {
     _banner?.dispose();
     _banner = null;
+
+    AdHelper.releaseAdResource();
 
     super.dispose();
   }
