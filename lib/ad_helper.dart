@@ -4,8 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 
+const int maxFailedLoadAttempts = 3;
+
 class AdHelper {
   static final logger = Logger();
+  static InterstitialAd _interstitialAd;
+  static int _numInterstitialLoadAttempts = 0;
 
   static String get bannerAdUnitId => Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/6300978111'
@@ -44,5 +48,50 @@ class AdHelper {
         },
       ),
     )..load();
+  }
+
+  static void createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          logger.i('$ad loaded');
+          _interstitialAd = ad;
+          _numInterstitialLoadAttempts = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          logger.e('InterstitialAd failed to load: $error.');
+          _numInterstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
+            createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  static void showInterstitialAd() {
+    if (_interstitialAd == null) {
+      logger.w('Attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          logger.i('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        logger.i('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        logger.e('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        createInterstitialAd();
+      },
+    );
+    _interstitialAd.show();
+    _interstitialAd = null;
   }
 }

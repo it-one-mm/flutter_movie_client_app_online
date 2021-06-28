@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleSeriesTap(context, Series series) {
+    AdHelper.showInterstitialAd();
     RouteHandler.buildMaterialRoute(
         context, SeriesDetailScreen(series: series));
   }

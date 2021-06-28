@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import '../screens/series_detail_screen.dart';
+import '../screens/v_play_screen.dart';
+import '../utils/route_handler.dart';
 import '../ad_helper.dart';
 import '../widgets/my_image_card.dart';
 import '../models/movie.dart';
@@ -40,6 +43,24 @@ class _GenreScreenState extends State<GenreScreen> {
         _banner = ad as BannerAd;
       });
     });
+  }
+
+  void _handleMovieTap(BuildContext context, Movie movie) {
+    RouteHandler.buildMaterialRoute(
+      context,
+      VPlayScreen(
+        path: movie.key,
+        title: movie.title,
+        isMovie: true,
+        movieId: movie.id,
+      ),
+    );
+  }
+
+  void _handleSeriesTap(context, Series series) {
+    AdHelper.showInterstitialAd();
+    RouteHandler.buildMaterialRoute(
+        context, SeriesDetailScreen(series: series));
   }
 
   @override
@@ -126,7 +147,9 @@ class _GenreScreenState extends State<GenreScreen> {
 
                     return GestureDetector(
                       child: MyImageCard(imageUrl: movie.imageUrl),
-                      onTap: () {},
+                      onTap: () {
+                        _handleMovieTap(context, movie);
+                      },
                     );
                   },
                 ),
@@ -173,7 +196,9 @@ class _GenreScreenState extends State<GenreScreen> {
                       child: MyImageCard(
                         imageUrl: series.imageUrl,
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        _handleSeriesTap(context, series);
+                      },
                     );
                   },
                 ),

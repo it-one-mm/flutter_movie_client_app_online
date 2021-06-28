@@ -95,6 +95,7 @@ class _SeriesScreenState extends State<SeriesScreen> {
                                 index: index,
                                 imageUrl: popularSeries.imageUrl,
                                 onTap: () {
+                                  AdHelper.showInterstitialAd();
                                   RouteHandler.buildMaterialRoute(
                                     context,
                                     SeriesDetailScreen(

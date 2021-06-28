@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../ad_helper.dart';
 import '../models/genre.dart';
 import '../config/my_router.dart';
 
@@ -26,7 +27,7 @@ class RouteHandler {
     Genre currentRouteArgs;
 
     Navigator.popUntil(context, (currentRoute) {
-      print('currentRoute: ${currentRoute.settings.name}');
+      // print('currentRoute: ${currentRoute.settings.name}');
 
       currentRouteArgs = currentRoute.settings?.arguments;
       // This is just a way to access currentRoute; the top route in the
@@ -42,14 +43,15 @@ class RouteHandler {
       return true;
     });
 
-    print('newRouteName: $newRouteName');
-    print('currentRouteIsHome: $currentRouteIsHome');
-    print('currentRouteIsNewRoute: $currentRouteIsNewRoute');
+    // print('newRouteName: $newRouteName');
+    // print('currentRouteIsHome: $currentRouteIsHome');
+    // print('currentRouteIsNewRoute: $currentRouteIsNewRoute');
 
     // Switch screen
     if (!currentRouteIsNewRoute) {
       // Only switch screen if new route is different from current route.
       if (currentRouteIsHome) {
+        AdHelper.showInterstitialAd();
         // Navigate from home to non-home screen.
         Navigator.pushNamed(context, newRouteName, arguments: arguments);
       } else {
@@ -57,6 +59,7 @@ class RouteHandler {
           // Navigate from non-home screen to home.
           Navigator.pop(context);
         } else {
+          AdHelper.showInterstitialAd();
           // Navigate from non-home screen to non-home screen.
           Navigator.popAndPushNamed(context, newRouteName,
               arguments: arguments);
@@ -66,6 +69,7 @@ class RouteHandler {
       if (newRouteName == MyRouter.GENRE_SCREEN) {
         final Genre newRouteArgs = arguments;
         if (currentRouteArgs?.id != newRouteArgs.id) {
+          AdHelper.showInterstitialAd();
           Navigator.popAndPushNamed(context, newRouteName,
               arguments: arguments);
         }

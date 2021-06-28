@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../ad_helper.dart';
 import '../utils/internet_handler.dart';
 import '../models/series.dart';
 import '../models/movie.dart';
@@ -36,6 +37,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     // check internet connection
     InternetHandler.checkConnection(
       onSuccess: () {
+        AdHelper.createInterstitialAd();
         _sub = Stream.periodic(Duration(seconds: 1), (val) {
           final genresList = context.read<List<Genre>>();
           final moviesList = context.read<List<Movie>>();
