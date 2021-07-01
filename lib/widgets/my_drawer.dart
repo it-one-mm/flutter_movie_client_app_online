@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import '../models/genre.dart';
 import '../utils/route_handler.dart';
@@ -10,7 +11,21 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  bool _expanded = false;
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _setAppVersion();
+  }
+
+  Future<void> _setAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _appVersion = packageInfo.version;
+    });
+  }
 
   ListTile _buildDrawerItem(
     BuildContext context, {
@@ -46,14 +61,14 @@ class _MyDrawerState extends State<MyDrawer> {
                   child: Image.asset('assets/logo.png'),
                 ),
                 Text(
-                  'App Name',
+                  'Movie Client',
                   style: TextStyle(
                     fontSize: 16.0,
                   ),
                 ),
                 SizedBox(height: 5.0),
                 Text(
-                  'Version 1.0.0',
+                  'Version $_appVersion',
                   style: Theme.of(context).textTheme.bodyText2.copyWith(
                         color: Theme.of(context).textTheme.caption.color,
                         fontSize: 12.0,

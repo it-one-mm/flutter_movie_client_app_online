@@ -43,6 +43,7 @@ dependencies:
   http: ^0.12.2
   google_mobile_ads: ^0.13.1
   logger: ^1.0.0
+  package_info: ^2.0.2
 
 dev_dependencies:
   flutter_test:
