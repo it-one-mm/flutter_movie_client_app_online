@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +32,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AdHelper.createInterstitialAd();
     AdHelper.createRewardedAd();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _getToken();
+    });
+  }
+
+  Future<void> _getToken() async {
+    final instance = FirebaseMessaging.instance;
+    final token = await instance.getToken();
+    logger.i('Device Token: $token');
+    // instance.onTokenRefresh.listen((String result) {
+    //   logger.i('Device Token: $result');
+    // });
   }
 
   @override
